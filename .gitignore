@@ -1,0 +1,14 @@
+# В .gitignore оставь:
+*.xcuserstate
+**/xcuserdata/
+*.xcworkspace/contents.xcworkspacedata
+
+# Но отслеживай:
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+
+# macOS system files
+.DS_Store
+*.DS_Store
+**/.DS_Store
+**/*.DS_Store
