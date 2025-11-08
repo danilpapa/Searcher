@@ -15,35 +15,31 @@ struct SearchFeature {
     @ObservableState
     struct State {
         var request: String = ""
-        var recentCats: [Image] = []
-        var isLoading: Bool = false
+        var recentCats: [HTTPCat] = []
     }
     
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case searchHttp
-        case addRecentImage(Image)
+        case addRecentCat(HTTPCat)
     }
     
-    // вот тут баг я ебал ReducerOf<> - нельзя нахуй
     var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
             switch action {
             case .searchHttp:
-                guard !state.request.isEmpty else { return .none }
-                state.isLoading = true
                 let queryCode = state.request
                 return .run { send in
                     do {
-                        let image = try await network.search(for: queryCode)
-                        await send(.addRecentImage(image))
+                        let cat = try await network.search(for: queryCode)
+                        await send(.addRecentCat(cat))
                     } catch {
                         print(error.localizedDescription)
                     }
                 }
-            case let .addRecentImage(image):
-                state.recentCats.append(image)
+            case let .addRecentCat(cat):
+                state.recentCats.append(cat)
                 return .none
             case .binding:
                 return .none
@@ -57,8 +53,11 @@ struct HTTPSearchView: View {
     var body: some View {
         VStack {
             List {
-                ForEach(store.recentCats.indices, id: \.self) { imageIndex in
-                    Text(imageIndex.description)
+                ForEach(store.recentCats) { cat in
+                    catCell(
+                        image: cat.image,
+                        error: cat.statusCode
+                    )
                 }
             }
             .overlay(alignment: .center) {
@@ -76,6 +75,16 @@ struct HTTPSearchView: View {
             }
         }
         .padding(.horizontal)
+    }
+    
+    func catCell(image: Image, error: String) -> some View {
+        HStack {
+            image
+                .resizable()
+                .scaledToFit()
+                .frame(maxHeight: UIScreen.main.bounds.width / 4)
+            Text(error)
+        }
     }
 }
 

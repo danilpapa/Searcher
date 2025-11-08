@@ -23,8 +23,8 @@ extension DependencyValues {
 }
 
 final class NetworkServicePreview: INetworkService {
-    func search(for code: String) async throws -> Image {
+    func search(for code: String) async throws -> HTTPCat {
         try await Task.sleep(nanoseconds: 2_000_000_000)
-        return Image(systemName: "star.fill")
+        return HTTPCat(image: Image(systemName: "star.fill"), statusCode: "777")
     }
 }

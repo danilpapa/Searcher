@@ -13,27 +13,25 @@ import Dependencies
 
 protocol INetworkService {
     
-    func search(for code: String) async throws -> Image
+    func search(for code: String) async throws -> HTTPCat
 }
 
 final class NetworkServiceImpl: INetworkService {
     
-    func search(for code: String) async throws -> Image {
+    func search(for code: String) async throws -> HTTPCat {
         guard let url = Endpoint.httpCat(code).url else {
             throw NetworkServiceError.creatingURL
         }
-        let data = try await AF.request(
-            url,
-            method: .get
-        )
-        .validate()
-        .serializingData()
-        .value
+        let data = try await AF
+            .request(url, method: .get)
+            .validate()
+            .serializingData()
+            .value
         
         guard let image = UIImage(data: data) else {
             throw NetworkServiceError.dataToUIImage
         }
-        return Image(uiImage: image)
+        return HTTPCat(image: Image(uiImage: image), statusCode: code)
     }
 }
 
