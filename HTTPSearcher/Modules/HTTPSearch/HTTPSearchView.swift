@@ -16,6 +16,8 @@ struct SearchFeature {
     struct State: Equatable {
         var request: String = ""
         var recentCats: [HTTPCat] = []
+        
+        @Presents var detail: CatDetailFeature.State?
     }
     
     enum Action: BindableAction {
@@ -23,6 +25,8 @@ struct SearchFeature {
         case searchHttp
         case addRecentCat(HTTPCat)
         case clearQuery
+        
+        case detail(PresentationAction<CatDetailFeature.Action>)
     }
     
     var body: some Reducer<State, Action> {
@@ -47,9 +51,20 @@ struct SearchFeature {
             case .clearQuery:
                 state.request = ""
                 return .none
+            case .detail(.presented(.showCatDetail(let cat))):
+                state.detail = CatDetailFeature.State(cat: cat)
+                return .none
+            case .detail(.presented(_)):
+                return .none
+            case .detail(.dismiss):
+                state.detail = nil
+                return .none
             case .binding:
                 return .none
             }
+        }
+        .ifLet(\.$detail, action: \.detail) {
+            CatDetailFeature()
         }
     }
 }
@@ -80,6 +95,9 @@ struct HTTPSearchView: View {
                     }
             }
             .safeAreaPadding(.top)
+            .sheet(item: $store.scope(state: \.detail, action: \.detail)) { detailStore in
+                CatDetailView(store: detailStore)
+            }
         }
         .padding(.horizontal)
     }
@@ -116,7 +134,7 @@ struct HTTPSearchView: View {
         WithViewStore(store) { $0 } content: { store in
             if let lastCat = store.recentCats.last {
                 Button("Show last cat") {
-                    
+                    store.send(.detail(.presented(.showCatDetail(store.state.recentCats.last!))))
                 }
             }
         }
