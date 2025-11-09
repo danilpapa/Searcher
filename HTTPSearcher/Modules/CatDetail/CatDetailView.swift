@@ -19,14 +19,19 @@ struct CatDetailFeature {
     enum Action {
         case showCatDetail(HTTPCat)
         case closeTapped
+        case removeCat
     }
     
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case let .showCatDetail(cat):
+        case let .showCatDetail(_):
             return .none
         case .closeTapped:
             return .none
+        case .removeCat:
+            return .run { send in
+                await send(.closeTapped)
+            }
         }
     }
 }
@@ -34,6 +39,11 @@ struct CatDetailFeature {
 struct CatDetailView: View {
     var store: StoreOf<CatDetailFeature>
     var body: some View {
-        store.cat.image
+        VStack {
+            store.cat.image
+            Button("Remove that http") {
+                store.send(.removeCat)
+            }
+        }
     }
 }

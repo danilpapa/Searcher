@@ -54,6 +54,10 @@ struct SearchFeature {
             case .detail(.presented(.showCatDetail(let cat))):
                 state.detail = CatDetailFeature.State(cat: cat)
                 return .none
+            case .detail(.presented(.removeCat)):
+                _ = state.recentCats.popLast()
+                state.detail = nil
+                return .none
             case .detail(.presented(_)):
                 return .none
             case .detail(.dismiss):
