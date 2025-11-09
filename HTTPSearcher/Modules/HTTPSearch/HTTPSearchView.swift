@@ -20,7 +20,7 @@ struct SearchFeature {
         @Presents var detail: CatDetailFeature.State?
     }
     
-    enum Action: BindableAction {
+    enum Action: BindableAction, Equatable {
         case binding(BindingAction<State>)
         case searchHttp
         case addRecentCat(HTTPCat)

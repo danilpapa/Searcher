@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import Dependencies
 
 struct HTTPCat: Identifiable, Equatable {
     
-    let id: UUID = .init()
     let image: Image
     let statusCode: String
+    
+    var id: String {
+        statusCode
+    }
 }

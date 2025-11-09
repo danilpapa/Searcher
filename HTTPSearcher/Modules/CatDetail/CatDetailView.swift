@@ -16,7 +16,7 @@ struct CatDetailFeature {
         var cat: HTTPCat
     }
     
-    enum Action {
+    enum Action: Equatable {
         case showCatDetail(HTTPCat)
         case closeTapped
         case removeCat
