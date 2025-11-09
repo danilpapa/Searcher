@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HTTPCat: Identifiable {
+struct HTTPCat: Identifiable, Equatable {
     
     let id: UUID = .init()
     let image: Image

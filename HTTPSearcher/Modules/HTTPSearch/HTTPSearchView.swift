@@ -13,7 +13,7 @@ struct SearchFeature {
     @Dependency(\.networkService) var network
     
     @ObservableState
-    struct State {
+    struct State: Equatable {
         var request: String = ""
         var recentCats: [HTTPCat] = []
     }
@@ -22,6 +22,7 @@ struct SearchFeature {
         case binding(BindingAction<State>)
         case searchHttp
         case addRecentCat(HTTPCat)
+        case clearQuery
     }
     
     var body: some Reducer<State, Action> {
@@ -40,6 +41,11 @@ struct SearchFeature {
                 }
             case let .addRecentCat(cat):
                 state.recentCats.append(cat)
+                return .run { send in
+                    await send(.clearQuery)
+                }
+            case .clearQuery:
+                state.request = ""
                 return .none
             case .binding:
                 return .none
@@ -73,6 +79,7 @@ struct HTTPSearchView: View {
                         store.send(.searchHttp)
                     }
             }
+            .safeAreaPadding(.top)
         }
         .padding(.horizontal)
     }
@@ -82,24 +89,36 @@ struct HTTPSearchView: View {
             image
                 .resizable()
                 .scaledToFit()
-                .frame(maxHeight: UIScreen.main.bounds.width / 4)
+                .frame(maxHeight: 100)
             Text(error)
         }
     }
 }
 
 #Preview {
-    NavigationStack {
-        HTTPSearchView(
-            store: .init(
-                initialState: .init(),
-                reducer: {
-                    SearchFeature()
-                        ._printChanges()
+    let store: StoreOf<SearchFeature> = .init(
+        initialState: .init(),
+        reducer: {
+            SearchFeature()
+                ._printChanges()
+        }
+    )
+    TabView {
+        Tab("http cat", systemImage: "cat") {
+            NavigationStack {
+                HTTPSearchView(store: store)
+                    .navigationTitle("Search Cat")
+                    .navigationBarTitleDisplayMode(.inline)
+            }
+        }
+    }
+    .tabViewBottomAccessory {
+        WithViewStore(store) { $0 } content: { store in
+            if let lastCat = store.recentCats.last {
+                Button("Show last cat") {
+                    
                 }
-            )
-        )
-        .navigationTitle("Search Cat")
-        .navigationBarTitleDisplayMode(.inline)
+            }
+        }
     }
 }
