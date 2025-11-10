@@ -10,21 +10,35 @@ import ComposableArchitecture
 
 @main
 struct HTTPSearcherApp: App {
+    let store: StoreOf<SearchFeature> = .init(
+        initialState: .init(),
+        reducer: {
+            SearchFeature()
+                ._printChanges()
+        }
+    )
+    
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                HTTPSearchView(
-                    store: .init(
-                        initialState: .init(),
-                        reducer: {
-                            SearchFeature()
-                                ._printChanges()
+            TabView {
+                Tab("http cat", systemImage: "cat") {
+                    NavigationStack {
+                        HTTPSearchView(store: store)
+                            .navigationTitle("Search Cat")
+                            .navigationBarTitleDisplayMode(.inline)
+                    }
+                }
+            }
+            .tabViewBottomAccessory {
+                WithViewStore(store) { $0 } content: { store in
+                    if let lastCat = store.recentCats.last {
+                        Button("Show last cat") {
+                            store.send(.detail(.presented(.showCatDetail(store.state.recentCats.last!))))
                         }
-                    )
-                )
-                .navigationTitle("Search Cat")
-                .navigationBarTitleDisplayMode(.inline)
+                    }
+                }
             }
         }
     }
 }
+

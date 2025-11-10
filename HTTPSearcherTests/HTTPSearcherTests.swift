@@ -11,7 +11,6 @@ import SwiftUI
 import ComposableArchitecture
 
 final class HTTPSearcherTests: XCTestCase {
-    
     @MainActor
     func testSearchHttpSuccess() async {        
         let store = TestStore(initialState: SearchFeature.State()) {

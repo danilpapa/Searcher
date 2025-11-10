@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		681B893D2EBFBC63006DFB7A /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 681B893C2EBFBC63006DFB7A /* ComposableArchitecture */; };
 		681B894B2EBFC46C006DFB7A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 681B894A2EBFC46C006DFB7A /* Alamofire */; };
+		687F2E812EC2368200F40012 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 681B893E2EBFBC69006DFB7A /* ComposableArchitecture */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				687F2E812EC2368200F40012 /* ComposableArchitecture in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
